@@ -1,0 +1,42 @@
+pipeline {
+enviroment {
+  dockerhost = '10.1.1.195'
+  registry = 'vinaykumar331/app'
+}
+    agent any
+    stages {
+        stage('Git clone') {
+            steps {
+                git credentialsId: 'vinaykumar331', url: 'https://github.com/vinaykumar331/myweb.git'
+            }
+        }
+        stage('Build with maven') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+        stage('Building Docker Image') {
+            steps {
+                sh "docker build . -t $registry:v$BUILD_NUMBER"
+            }
+        }
+        stage('Push Image to docker hub') {
+            steps {
+                withCredentials([string(credentialsId: 'DockerHub_id', variable: 'DockerHub_Credentials')]) {
+                sh "docker login -u vinaykumar331 -p ${DockerHub_Credentials}"
+                sh "docker push $registry:v$BUILD_NUMBER" 
+               }
+            }
+        }
+        stage('Clean up locally')
+            steps {
+                sh "docker rmi $registry:v$BUILD_NUMBER"
+            }
+        }
+        stage('Deploying docker container') {
+            steps {
+                sh "docker -H tcp://$dockerhost --rm -dit --name cont1 -p 8000:8080 $registry:v$BUILD_NUMBER"
+            }
+        }
+    }
+}
