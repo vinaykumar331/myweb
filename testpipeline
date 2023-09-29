@@ -1,5 +1,5 @@
 pipeline {
-enviroment {
+environment {
   dockerhost = '10.1.1.195'
   registry = 'vinaykumar331/app'
 }
