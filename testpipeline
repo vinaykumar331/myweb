@@ -28,7 +28,7 @@ enviroment {
                }
             }
         }
-        stage('Clean up locally')
+        stage('Clean up locally'){
             steps {
                 sh "docker rmi $registry:v$BUILD_NUMBER"
             }
