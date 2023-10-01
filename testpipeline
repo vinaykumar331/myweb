@@ -33,7 +33,7 @@ environment {
                 sh "docker rmi $registry:v$BUILD_NUMBER"
             }
         }
-        stage('Deploying docker container') {
+        stage('Deploy Tomcat container') {
             steps {
                 sh "docker run --rm -dit --name cont1 -p 8000:8080 $registry:v$BUILD_NUMBER"
             }
