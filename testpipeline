@@ -1,13 +1,13 @@
 pipeline {
 environment {
-  dockerhost = '10.1.1.195'
+  dockerhost = '10.1.1.143'
   registry = 'vinaykumar331/app'
 }
     agent any
     stages {
         stage('Git clone') {
             steps {
-                git credentialsId: 'vinaykumar331', url: 'https://github.com/vinaykumar331/myweb.git'
+                git credentialsId: 'GitHub-id', url: 'https://github.com/vinaykumar331/myweb.git'
             }
         }
         stage('Build with maven') {
@@ -35,7 +35,7 @@ environment {
         }
         stage('Deploying docker container') {
             steps {
-                sh "docker -H tcp://$dockerhost --rm -dit --name cont1 -p 8000:8080 $registry:v$BUILD_NUMBER"
+                sh "docker run --rm -dit --name cont1 -p 8000:8080 $registry:v$BUILD_NUMBER"
             }
         }
     }
