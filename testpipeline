@@ -22,7 +22,7 @@ environment {
         }
         stage('Push Image to docker hub') {
             steps {
-                withCredentials([string(credentialsId: 'DockerHub_id', variable: 'DockerHub_Credentials')]) {
+                withCredentials([string(credentialsId: 'Dockerhub_id', variable: 'DockerHub_Credentials')]) {
                 sh "docker login -u vinaykumar331 -p ${DockerHub_Credentials}"
                 sh "docker push $registry:v$BUILD_NUMBER" 
                }
