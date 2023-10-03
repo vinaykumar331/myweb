@@ -1,0 +1,44 @@
+pipeline {
+    environment {
+          registry = 'vinaykumar331/app'
+          dockerhost = '10.1.1.97'
+            }
+    agent any
+    stages {
+
+        stage('Git clone') {
+            steps {
+                git credentialsId: 'GitHub_id', url: 'https://github.com/vinaykumar331/myweb.git'
+            }
+        }
+        stage('Build with Maven') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build . -t $registry:T$BUILD_NUMBER'
+            }
+        }
+        stage('Push Image to D.Hub') {
+            steps {
+                withCredentials([string(credentialsId: 'DockerHub_id', variable: 'DockerHUb_Credentials')]) {
+                sh "docker login -u vinaykumar331 -p ${DockerHUb_Credentials}"
+                sh "docker push $registry:T$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Locally clean up') {
+            steps {
+                sh "docker rmi $registry:T$BUILD_NUMBER"
+            }
+        }
+        stage('Deploy Tomact cntainer') {
+            steps {
+                sh "docker run --rm -dit --name con1 -p 8500:8080 $registry:T$BUILD_NUMBER"
+            }
+        }
+
+    }
+}
